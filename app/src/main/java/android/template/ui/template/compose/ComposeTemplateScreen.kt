@@ -1,21 +1,11 @@
 /*
- * Copyright (C) 2022 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Created by: glynn.nguyen.goldenowl@gmail.com
+ * Copyright © 2015 - 2023 Golden Owl Consulting
+ * Contact us: https://goldenowl.asia/
  */
 
-package android.template.ui.mymodel
-
+package android.template.ui.template.compose
+import android.template.ui.template.TemplateUiState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,13 +29,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.repeatOnLifecycle
 import android.template.ui.theme.MyApplicationTheme
+import android.template.ui.viewmodel.TemplateViewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 @Composable
-fun MyModelScreen(modifier: Modifier = Modifier, viewModel: MyModelViewModel = hiltViewModel()) {
+fun ComposeTempleScreen(modifier: Modifier = Modifier, viewModel: TemplateViewModel = hiltViewModel()) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val items by produceState<MyModelUiState>(
-        initialValue = MyModelUiState.Loading,
+    val items by produceState<TemplateUiState>(
+        initialValue = TemplateUiState(true, null, listOf()),
         key1 = lifecycle,
         key2 = viewModel
     ) {
@@ -53,10 +44,11 @@ fun MyModelScreen(modifier: Modifier = Modifier, viewModel: MyModelViewModel = h
             viewModel.uiState.collect { value = it }
         }
     }
-    if (items is MyModelUiState.Success) {
+
+    if(items.data.isNotEmpty()){
         MyModelScreen(
-            items = (items as MyModelUiState.Success).data,
-            onSave = viewModel::addMyModel,
+            items = items.data.map { it.name },
+            onSave = viewModel::addTemplate,
             modifier = modifier
         )
     }
